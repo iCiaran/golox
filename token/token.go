@@ -16,5 +16,5 @@ func New(tokenType Type, lexeme string, literal interface{}, line int) *Token {
 }
 
 func (token *Token) String() string {
-	return fmt.Sprintf("[%s %s %v]", token.Type, token.Lexeme, token.Literal)
+	return fmt.Sprintf("[%-14s %-8s %v]", token.Type, token.Lexeme, token.Literal)
 }
