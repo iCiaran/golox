@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/iCiaran/golox/loxerror"
 	"github.com/iCiaran/golox/scanner"
 )
 
@@ -28,6 +29,9 @@ func runFile(path string) {
 		os.Exit(66)
 	}
 	run(string(source))
+	if loxerror.HadError {
+		os.Exit(65)
+	}
 }
 
 func runPrompt() {
@@ -36,6 +40,7 @@ func runPrompt() {
 		fmt.Print("> ")
 		line, _ := reader.ReadString('\n')
 		run(line)
+		loxerror.HadError = false
 	}
 }
 
