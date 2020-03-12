@@ -92,6 +92,8 @@ func (sc *Scanner) scanToken() {
 		sc.scanString()
 	case unicode.IsDigit(c):
 		sc.number()
+	case isAlpha(c):
+		sc.identifier()
 	case c == ' ', c == '\r', c == '\t':
 		break
 	case c == '\n':
@@ -209,7 +211,28 @@ func (sc *Scanner) number() {
 	sc.addToken(token.NUMBER, num)
 }
 
+func (sc *Scanner) identifier() {
+	for isAlphanumeric(sc.peek()) {
+		sc.advance()
+	}
+
+	text := sc.source[sc.start:sc.current]
+	if val, ok := token.Keywords[text]; ok {
+		sc.addToken(val, nil)
+	} else {
+		sc.addToken(token.IDENTIFIER, nil)
+	}
+}
+
 func (sc *Scanner) addToken(tokenType token.Type, literal interface{}) {
 	text := sc.source[sc.start:sc.current]
 	sc.Tokens = append(sc.Tokens, token.New(tokenType, text, literal, sc.line))
+}
+
+func isAlphanumeric(r rune) bool {
+	return unicode.IsDigit(r) || isAlpha(r)
+}
+
+func isAlpha(r rune) bool {
+	return unicode.IsLetter(r) || r == '_'
 }
