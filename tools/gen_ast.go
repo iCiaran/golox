@@ -70,7 +70,7 @@ func defineVisitor(f *os.File, baseName string, types []string) {
 	writeLine(f, "type Visitor interface {")
 	for _, t := range types {
 		className := strings.TrimSpace(strings.Split(t, ":")[0])
-		writeLine(f, fmt.Sprintf("Visit%s%s(expr *%s) interface{}", className, baseName, className))
+		writeLine(f, fmt.Sprintf("Visit%s%s(expr %s) interface{}", className, baseName, className))
 	}
 	writeLine(f, "}")
 }
@@ -113,6 +113,6 @@ func defineNew(f *os.File, className string, args []string) {
 func defineAccept(f *os.File, baseName, className string) {
 	c := strings.ToLower(className[0:1])
 	writeLine(f, fmt.Sprintf("func (%s *%s) Accept(v Visitor) interface{} {", c, className))
-	writeLine(f, fmt.Sprintf("return v.Visit%s%s(%s)", className, baseName, c))
+	writeLine(f, fmt.Sprintf("return v.Visit%s%s(*%s)", className, baseName, c))
 	writeLine(f, "}")
 }

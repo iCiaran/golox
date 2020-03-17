@@ -5,10 +5,10 @@ import (
 )
 
 type Visitor interface {
-	VisitBinaryExpr(expr *Binary) interface{}
-	VisitGroupingExpr(expr *Grouping) interface{}
-	VisitLiteralExpr(expr *Literal) interface{}
-	VisitUnaryExpr(expr *Unary) interface{}
+	VisitBinaryExpr(expr Binary) interface{}
+	VisitGroupingExpr(expr Grouping) interface{}
+	VisitLiteralExpr(expr Literal) interface{}
+	VisitUnaryExpr(expr Unary) interface{}
 }
 type Expr interface {
 	Accept(v Visitor) interface{}
@@ -23,7 +23,7 @@ func NewBinary(left Expr, operator *token.Token, right Expr) *Binary {
 	return &Binary{Left: left, Operator: operator, Right: right}
 }
 func (b *Binary) Accept(v Visitor) interface{} {
-	return v.VisitBinaryExpr(b)
+	return v.VisitBinaryExpr(*b)
 }
 
 type Grouping struct {
@@ -34,7 +34,7 @@ func NewGrouping(expression Expr) *Grouping {
 	return &Grouping{Expression: expression}
 }
 func (g *Grouping) Accept(v Visitor) interface{} {
-	return v.VisitGroupingExpr(g)
+	return v.VisitGroupingExpr(*g)
 }
 
 type Literal struct {
@@ -45,7 +45,7 @@ func NewLiteral(value interface{}) *Literal {
 	return &Literal{Value: value}
 }
 func (l *Literal) Accept(v Visitor) interface{} {
-	return v.VisitLiteralExpr(l)
+	return v.VisitLiteralExpr(*l)
 }
 
 type Unary struct {
@@ -57,5 +57,5 @@ func NewUnary(operator *token.Token, right Expr) *Unary {
 	return &Unary{Operator: operator, Right: right}
 }
 func (u *Unary) Accept(v Visitor) interface{} {
-	return v.VisitUnaryExpr(u)
+	return v.VisitUnaryExpr(*u)
 }
