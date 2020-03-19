@@ -7,7 +7,9 @@ import (
 	"log"
 	"os"
 
+	"github.com/iCiaran/golox/ast"
 	"github.com/iCiaran/golox/loxerror"
+	"github.com/iCiaran/golox/parser"
 	"github.com/iCiaran/golox/scanner"
 )
 
@@ -48,7 +50,17 @@ func run(source string) {
 	sc := scanner.New(source)
 	tokens := sc.ScanTokens()
 
-	for _, token := range tokens {
-		fmt.Printf("%v\n", token)
+	if loxerror.HadError {
+		return
 	}
+
+	pa := parser.NewParser(tokens)
+	ex := pa.Parse()
+
+	if loxerror.HadError {
+		return
+	}
+
+	pr := ast.NewPrinter()
+	fmt.Println(pr.Print(ex))
 }
