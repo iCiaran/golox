@@ -7,7 +7,8 @@ import (
 )
 
 var (
-	HadError bool = false
+	HadError        bool = false
+	HadRuntimeError bool = false
 )
 
 func Error(line int, where, message string) {
@@ -21,4 +22,10 @@ func ParseError(t *token.Token, message string) {
 	} else {
 		Error(t.Line, " at '"+t.Lexeme+"'", message)
 	}
+}
+
+func RuntimeError(t *token.Token, message string) {
+	Error(t.Line, "", message)
+	HadRuntimeError = true
+	panic(message)
 }

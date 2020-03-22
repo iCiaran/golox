@@ -7,10 +7,14 @@ import (
 	"log"
 	"os"
 
-	"github.com/iCiaran/golox/ast"
+	"github.com/iCiaran/golox/interpreter"
 	"github.com/iCiaran/golox/loxerror"
 	"github.com/iCiaran/golox/parser"
 	"github.com/iCiaran/golox/scanner"
+)
+
+var (
+	in = interpreter.NewInterpreter()
 )
 
 func main() {
@@ -31,6 +35,9 @@ func runFile(path string) {
 		os.Exit(66)
 	}
 	run(string(source))
+	if loxerror.HadRuntimeError {
+		os.Exit(70)
+	}
 	if loxerror.HadError {
 		os.Exit(65)
 	}
@@ -43,6 +50,7 @@ func runPrompt() {
 		line, _ := reader.ReadString('\n')
 		run(line)
 		loxerror.HadError = false
+		loxerror.HadRuntimeError = false
 	}
 }
 
@@ -61,6 +69,5 @@ func run(source string) {
 		return
 	}
 
-	pr := ast.NewPrinter()
-	fmt.Println(pr.Print(ex))
+	in.Interpret(ex)
 }
