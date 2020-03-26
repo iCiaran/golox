@@ -84,6 +84,17 @@ func (i *Interpreter) VisitBinaryExpr(expr ast.Binary) interface{} {
 	return nil
 }
 
+func (i *Interpreter) VisitExpressionStmt(stmt ast.Expression) interface{} {
+	i.evaluate(stmt.Expr)
+	return nil
+}
+
+func (i *Interpreter) VisitPrintStmt(stmt ast.Print) interface{} {
+	value := i.evaluate(stmt.Expr)
+	fmt.Printf("%v\n", value)
+	return nil
+}
+
 func (i *Interpreter) Interpret(expr ast.Expr) {
 	defer func() {
 		if r := recover(); r != nil && !loxerror.HadRuntimeError {
@@ -96,6 +107,10 @@ func (i *Interpreter) Interpret(expr ast.Expr) {
 
 func (i *Interpreter) evaluate(expr ast.Expr) interface{} {
 	return expr.Accept(i)
+}
+
+func (i *Interpreter) execute(stmt ast.Stmt) {
+	stmt.Accept(i)
 }
 
 func (i *Interpreter) isTruthy(object interface{}) bool {

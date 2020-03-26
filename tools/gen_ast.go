@@ -17,8 +17,8 @@ func generateAst() {
 	})
 
 	defineAst(outputDir, "Stmt", []string{
-		"Expression : expr Expr",
-		"Print      : expr Expr",
+		"Expression : Expr Expr",
+		"Print      : Expr Expr",
 	})
 }
 
