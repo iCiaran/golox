@@ -18,13 +18,26 @@ func NewParser(tokens []*token.Token) *Parser {
 func (p *Parser) Parse() []ast.Stmt {
 	statements := make([]ast.Stmt, 0)
 	for !p.isAtEnd() {
-		statements = append(statements, p.statement())
+		statements = append(statements, p.declaration())
 	}
 	return statements
 }
 
 func (p *Parser) expression() ast.Expr {
 	return p.equality()
+}
+
+func (p *Parser) declaration() ast.Stmt {
+	defer func() {
+		if r := recover(); r != nil {
+			p.synchronise()
+		}
+	}()
+
+	if p.match(token.VAR) {
+		return p.varDeclaration()
+	}
+	return p.statement()
 }
 
 func (p *Parser) equality() ast.Expr {
@@ -90,6 +103,8 @@ func (p *Parser) primary() ast.Expr {
 		expr := p.expression()
 		p.consume(token.RIGHT_PAREN, "Expect ')' after expression.")
 		return ast.NewGrouping(expr)
+	case p.match(token.IDENTIFIER):
+		return ast.NewVariable(p.previous())
 	}
 
 	loxerror.ParseError(p.peek(), "Expect expression.")
@@ -113,6 +128,19 @@ func (p *Parser) expressionStatement() ast.Stmt {
 	expr := p.expression()
 	p.consume(token.SEMICOLON, "Expect ';' after value.")
 	return ast.NewExpression(expr)
+}
+
+func (p *Parser) varDeclaration() ast.Stmt {
+	name := p.consume(token.IDENTIFIER, "Expect variable name.")
+
+	var initializer ast.Expr = nil
+
+	if p.match(token.EQUAL) {
+		initializer = p.expression()
+	}
+
+	p.consume(token.SEMICOLON, "Expect ';' after variable declaration.")
+	return ast.NewVar(name, initializer)
 }
 
 func (p *Parser) advance() *token.Token {

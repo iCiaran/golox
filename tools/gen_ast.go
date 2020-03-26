@@ -14,11 +14,13 @@ func generateAst() {
 		"Grouping : Expression Expr",
 		"Literal  : Value interface{}",
 		"Unary    : Operator *token.Token, Right Expr",
+		"Variable : Name *token.Token",
 	})
 
 	defineAst(outputDir, "Stmt", []string{
 		"Expression : Expr Expr",
 		"Print      : Expr Expr",
+		"Var        : Name *token.Token, Initializer Expr",
 	})
 }
 
@@ -62,6 +64,8 @@ func defineAst(outputDir, baseName string, types []string) {
 
 	switch baseName {
 	case "Expr":
+		writeImports(f, []string{`"github.com/iCiaran/golox/token"`})
+	case "Stmt":
 		writeImports(f, []string{`"github.com/iCiaran/golox/token"`})
 	}
 
@@ -120,7 +124,7 @@ func defineNew(f *os.File, className string, args []string) {
 
 func defineAccept(f *os.File, baseName, className string) {
 	c := strings.ToLower(className[0:1])
-	writeLine(f, fmt.Sprintf("func (%s *%s) Accept(v %sVisitor) interface{} {", c, className, baseName))
-	writeLine(f, fmt.Sprintf("return v.Visit%s%s(*%s)", className, baseName, c))
+	writeLine(f, fmt.Sprintf("func (%s *%s) Accept(vis %sVisitor) interface{} {", c, className, baseName))
+	writeLine(f, fmt.Sprintf("return vis.Visit%s%s(*%s)", className, baseName, c))
 	writeLine(f, "}")
 }

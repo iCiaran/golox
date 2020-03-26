@@ -4,14 +4,17 @@ import (
 	"fmt"
 
 	"github.com/iCiaran/golox/ast"
+	"github.com/iCiaran/golox/environment"
 	"github.com/iCiaran/golox/loxerror"
 	"github.com/iCiaran/golox/token"
 )
 
-type Interpreter struct{}
+type Interpreter struct {
+	environment *environment.Environment
+}
 
 func NewInterpreter() *Interpreter {
-	return &Interpreter{}
+	return &Interpreter{environment.NewEnvironment()}
 }
 
 func (i *Interpreter) VisitLiteralExpr(expr ast.Literal) interface{} {
@@ -84,6 +87,10 @@ func (i *Interpreter) VisitBinaryExpr(expr ast.Binary) interface{} {
 	return nil
 }
 
+func (i *Interpreter) VisitVariableExpr(expr ast.Variable) interface{} {
+	return i.environment.Get(expr.Name)
+}
+
 func (i *Interpreter) VisitExpressionStmt(stmt ast.Expression) interface{} {
 	i.evaluate(stmt.Expr)
 	return nil
@@ -92,6 +99,16 @@ func (i *Interpreter) VisitExpressionStmt(stmt ast.Expression) interface{} {
 func (i *Interpreter) VisitPrintStmt(stmt ast.Print) interface{} {
 	value := i.evaluate(stmt.Expr)
 	fmt.Printf("%v\n", value)
+	return nil
+}
+
+func (i *Interpreter) VisitVarStmt(stmt ast.Var) interface{} {
+	var value interface{} = nil
+	if stmt.Initializer != nil {
+		value = i.evaluate(stmt.Initializer)
+	}
+
+	i.environment.Define(stmt.Name.Lexeme, value)
 	return nil
 }
 

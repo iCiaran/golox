@@ -18,10 +18,11 @@ func Error(line int, where, message string) {
 
 func ParseError(t *token.Token, message string) {
 	if t.Type == token.EOF {
-		Error(t.Line, " at end", message)
+		Error(t.Line, "at end", message)
 	} else {
-		Error(t.Line, " at '"+t.Lexeme+"'", message)
+		Error(t.Line, "at '"+t.Lexeme+"'", message)
 	}
+	panic(message)
 }
 
 func RuntimeError(t *token.Token, message string) {

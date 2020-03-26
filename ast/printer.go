@@ -34,6 +34,10 @@ func (p *printer) VisitUnaryExpr(expr Unary) interface{} {
 	return p.parenthesise(expr.Operator.Lexeme, expr.Right)
 }
 
+func (p *printer) VisitVariableExpr(expr Variable) interface{} {
+	return expr.Name.Lexeme
+}
+
 func (p *printer) parenthesise(name string, exprs ...Expr) string {
 	var sb strings.Builder
 	fmt.Fprintf(&sb, "(%s", name)
