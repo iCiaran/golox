@@ -15,12 +15,12 @@ func NewParser(tokens []*token.Token) *Parser {
 	return &Parser{tokens, 0}
 }
 
-func (p *Parser) Parse() ast.Expr {
-	expr := p.expression()
-	if loxerror.HadError {
-		return nil
+func (p *Parser) Parse() []ast.Stmt {
+	statements := make([]ast.Stmt, 0)
+	for !p.isAtEnd() {
+		statements = append(statements, p.statement())
 	}
-	return expr
+	return statements
 }
 
 func (p *Parser) expression() ast.Expr {
@@ -94,6 +94,25 @@ func (p *Parser) primary() ast.Expr {
 
 	loxerror.ParseError(p.peek(), "Expect expression.")
 	return nil
+}
+
+func (p *Parser) statement() ast.Stmt {
+	if p.match(token.PRINT) {
+		return p.printStatement()
+	}
+	return p.expressionStatement()
+}
+
+func (p *Parser) printStatement() ast.Stmt {
+	value := p.expression()
+	p.consume(token.SEMICOLON, "Expect ';' after value.")
+	return ast.NewPrint(value)
+}
+
+func (p *Parser) expressionStatement() ast.Stmt {
+	expr := p.expression()
+	p.consume(token.SEMICOLON, "Expect ';' after value.")
+	return ast.NewExpression(expr)
 }
 
 func (p *Parser) advance() *token.Token {

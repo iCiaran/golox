@@ -95,14 +95,16 @@ func (i *Interpreter) VisitPrintStmt(stmt ast.Print) interface{} {
 	return nil
 }
 
-func (i *Interpreter) Interpret(expr ast.Expr) {
+func (i *Interpreter) Interpret(statements []ast.Stmt) {
 	defer func() {
 		if r := recover(); r != nil && !loxerror.HadRuntimeError {
 			fmt.Println("Unknown exception: ", r)
 		}
 	}()
 
-	fmt.Printf("%v\n", i.evaluate(expr))
+	for _, stmt := range statements {
+		i.execute(stmt)
+	}
 }
 
 func (i *Interpreter) evaluate(expr ast.Expr) interface{} {

@@ -63,11 +63,11 @@ func run(source string) {
 	}
 
 	pa := parser.NewParser(tokens)
-	ex := pa.Parse()
+	st := pa.Parse()
 
 	if loxerror.HadError {
 		return
 	}
 
-	in.Interpret(ex)
+	in.Interpret(st)
 }
