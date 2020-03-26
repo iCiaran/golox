@@ -15,6 +15,11 @@ func generateAst() {
 		"Literal  : Value interface{}",
 		"Unary    : Operator *token.Token, Right Expr",
 	})
+
+	defineAst(outputDir, "Stmt", []string{
+		"Expression : expr Expr",
+		"Print      : expr Expr",
+	})
 }
 
 func check(e error) {
@@ -55,19 +60,22 @@ func defineAst(outputDir, baseName string, types []string) {
 
 	writeLine(f, "package ast")
 
-	writeImports(f, []string{`"github.com/iCiaran/golox/token"`})
+	switch baseName {
+	case "Expr":
+		writeImports(f, []string{`"github.com/iCiaran/golox/token"`})
+	}
 
 	defineVisitor(f, baseName, types)
 
 	writeLine(f, fmt.Sprintf("type %s interface {", baseName))
-	writeLine(f, "Accept(v Visitor) interface{}")
+	writeLine(f, fmt.Sprintf("Accept(v %sVisitor) interface{}", baseName))
 	writeLine(f, "}")
 
 	defineTypes(f, baseName, types)
 }
 
 func defineVisitor(f *os.File, baseName string, types []string) {
-	writeLine(f, "type Visitor interface {")
+	writeLine(f, "type "+baseName+"Visitor interface {")
 	for _, t := range types {
 		className := strings.TrimSpace(strings.Split(t, ":")[0])
 		writeLine(f, fmt.Sprintf("Visit%s%s(expr %s) interface{}", className, baseName, className))
@@ -112,7 +120,7 @@ func defineNew(f *os.File, className string, args []string) {
 
 func defineAccept(f *os.File, baseName, className string) {
 	c := strings.ToLower(className[0:1])
-	writeLine(f, fmt.Sprintf("func (%s *%s) Accept(v Visitor) interface{} {", c, className))
+	writeLine(f, fmt.Sprintf("func (%s *%s) Accept(v %sVisitor) interface{} {", c, className, baseName))
 	writeLine(f, fmt.Sprintf("return v.Visit%s%s(*%s)", className, baseName, c))
 	writeLine(f, "}")
 }
