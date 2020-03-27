@@ -14,7 +14,7 @@ type Interpreter struct {
 }
 
 func NewInterpreter() *Interpreter {
-	return &Interpreter{environment.NewEnvironment()}
+	return &Interpreter{environment.NewEnvironment(nil)}
 }
 
 func (i *Interpreter) VisitLiteralExpr(expr ast.Literal) interface{} {
