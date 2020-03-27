@@ -98,6 +98,11 @@ func (i *Interpreter) VisitAssignExpr(expr ast.Assign) interface{} {
 	return value
 }
 
+func (i *Interpreter) VisitBlockStmt(stmt ast.Block) interface{} {
+	i.executeBlock(stmt.Statements, environment.NewEnvironment(i.environment))
+	return nil
+}
+
 func (i *Interpreter) VisitExpressionStmt(stmt ast.Expression) interface{} {
 	i.evaluate(stmt.Expr)
 	return nil
@@ -137,6 +142,20 @@ func (i *Interpreter) evaluate(expr ast.Expr) interface{} {
 
 func (i *Interpreter) execute(stmt ast.Stmt) {
 	stmt.Accept(i)
+}
+
+func (i *Interpreter) executeBlock(statements []ast.Stmt, env *environment.Environment) {
+	previous := i.environment
+
+	defer func() {
+		i.environment = previous
+	}()
+
+	i.environment = env
+
+	for _, stmt := range statements {
+		i.execute(stmt)
+	}
 }
 
 func (i *Interpreter) isTruthy(object interface{}) bool {

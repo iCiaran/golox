@@ -5,6 +5,7 @@ import (
 )
 
 type StmtVisitor interface {
+	VisitBlockStmt(expr Block) interface{}
 	VisitExpressionStmt(expr Expression) interface{}
 	VisitPrintStmt(expr Print) interface{}
 	VisitVarStmt(expr Var) interface{}
@@ -12,6 +13,17 @@ type StmtVisitor interface {
 type Stmt interface {
 	Accept(v StmtVisitor) interface{}
 }
+type Block struct {
+	Statements []Stmt
+}
+
+func NewBlock(statements []Stmt) *Block {
+	return &Block{Statements: statements}
+}
+func (b *Block) Accept(vis StmtVisitor) interface{} {
+	return vis.VisitBlockStmt(*b)
+}
+
 type Expression struct {
 	Expr Expr
 }

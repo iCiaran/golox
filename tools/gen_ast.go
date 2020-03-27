@@ -19,6 +19,7 @@ func generateAst() {
 	})
 
 	defineAst(outputDir, "Stmt", []string{
+		"Block      : Statements []Stmt",
 		"Expression : Expr Expr",
 		"Print      : Expr Expr",
 		"Var        : Name *token.Token, Initializer Expr",

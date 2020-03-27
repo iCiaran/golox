@@ -129,6 +129,9 @@ func (p *Parser) statement() ast.Stmt {
 	if p.match(token.PRINT) {
 		return p.printStatement()
 	}
+	if p.match(token.LEFT_BRACE) {
+		return ast.NewBlock(p.block())
+	}
 	return p.expressionStatement()
 }
 
@@ -136,6 +139,15 @@ func (p *Parser) printStatement() ast.Stmt {
 	value := p.expression()
 	p.consume(token.SEMICOLON, "Expect ';' after value.")
 	return ast.NewPrint(value)
+}
+
+func (p *Parser) block() []ast.Stmt {
+	statements := make([]ast.Stmt, 0)
+	for !p.check(token.RIGHT_BRACE) && !p.isAtEnd() {
+		statements = append(statements, p.declaration())
+	}
+	p.consume(token.RIGHT_BRACE, "Expect '}' after block.")
+	return statements
 }
 
 func (p *Parser) expressionStatement() ast.Stmt {
