@@ -34,6 +34,10 @@ func (p *printer) VisitLiteralExpr(expr Literal) interface{} {
 	return "nil"
 }
 
+func (p *printer) VisitLogicalExpr(expr Logical) interface{} {
+	return p.parenthesise(expr.Operator.Lexeme, expr.Left, expr.Right)
+}
+
 func (p *printer) VisitUnaryExpr(expr Unary) interface{} {
 	return p.parenthesise(expr.Operator.Lexeme, expr.Right)
 }

@@ -98,6 +98,22 @@ func (i *Interpreter) VisitAssignExpr(expr ast.Assign) interface{} {
 	return value
 }
 
+func (i *Interpreter) VisitLogicalExpr(expr ast.Logical) interface{} {
+	left := i.evaluate(expr.Left)
+
+	switch expr.Operator.Type {
+	case token.OR:
+		if i.isTruthy(left) {
+			return left
+		}
+	case token.AND:
+		if !i.isTruthy(left) {
+			return left
+		}
+	}
+	return i.evaluate(expr.Right)
+}
+
 func (i *Interpreter) VisitBlockStmt(stmt ast.Block) interface{} {
 	i.executeBlock(stmt.Statements, environment.NewEnvironment(i.environment))
 	return nil

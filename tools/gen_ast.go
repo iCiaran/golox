@@ -14,6 +14,7 @@ func generateAst() {
 		"Binary	  : Left Expr, Operator *token.Token, Right Expr",
 		"Grouping : Expression Expr",
 		"Literal  : Value interface{}",
+		"Logical  : Left Expr, Operator *token.Token, Right Expr",
 		"Unary    : Operator *token.Token, Right Expr",
 		"Variable : Name *token.Token",
 	})

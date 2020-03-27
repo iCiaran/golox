@@ -9,6 +9,7 @@ type ExprVisitor interface {
 	VisitBinaryExpr(expr Binary) interface{}
 	VisitGroupingExpr(expr Grouping) interface{}
 	VisitLiteralExpr(expr Literal) interface{}
+	VisitLogicalExpr(expr Logical) interface{}
 	VisitUnaryExpr(expr Unary) interface{}
 	VisitVariableExpr(expr Variable) interface{}
 }
@@ -60,6 +61,19 @@ func NewLiteral(value interface{}) *Literal {
 }
 func (l *Literal) Accept(vis ExprVisitor) interface{} {
 	return vis.VisitLiteralExpr(*l)
+}
+
+type Logical struct {
+	Left     Expr
+	Operator *token.Token
+	Right    Expr
+}
+
+func NewLogical(left Expr, operator *token.Token, right Expr) *Logical {
+	return &Logical{Left: left, Operator: operator, Right: right}
+}
+func (l *Logical) Accept(vis ExprVisitor) interface{} {
+	return vis.VisitLogicalExpr(*l)
 }
 
 type Unary struct {

@@ -27,8 +27,19 @@ func (p *Parser) expression() ast.Expr {
 	return p.assignment()
 }
 
-func (p *Parser) assignment() ast.Expr {
+func (p *Parser) and() ast.Expr {
 	expr := p.equality()
+
+	for p.match(token.AND) {
+		operator := p.previous()
+		right := p.equality()
+		expr = ast.NewLogical(expr, operator, right)
+	}
+	return expr
+}
+
+func (p *Parser) assignment() ast.Expr {
+	expr := p.or()
 	if p.match(token.EQUAL) {
 		equals := p.previous()
 		value := p.assignment()
@@ -91,6 +102,18 @@ func (p *Parser) multiplication() ast.Expr {
 		right := p.unary()
 		expr = ast.NewBinary(expr, operator, right)
 	}
+	return expr
+}
+
+func (p *Parser) or() ast.Expr {
+	expr := p.and()
+
+	for p.match(token.OR) {
+		operator := p.previous()
+		right := p.and()
+		expr = ast.NewLogical(expr, operator, right)
+	}
+
 	return expr
 }
 
