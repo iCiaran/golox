@@ -91,6 +91,13 @@ func (i *Interpreter) VisitVariableExpr(expr ast.Variable) interface{} {
 	return i.environment.Get(expr.Name)
 }
 
+func (i *Interpreter) VisitAssignExpr(expr ast.Assign) interface{} {
+	value := i.evaluate(expr.Value)
+
+	i.environment.Assign(expr.Name, value)
+	return value
+}
+
 func (i *Interpreter) VisitExpressionStmt(stmt ast.Expression) interface{} {
 	i.evaluate(stmt.Expr)
 	return nil

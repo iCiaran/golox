@@ -5,6 +5,7 @@ import (
 )
 
 type ExprVisitor interface {
+	VisitAssignExpr(expr Assign) interface{}
 	VisitBinaryExpr(expr Binary) interface{}
 	VisitGroupingExpr(expr Grouping) interface{}
 	VisitLiteralExpr(expr Literal) interface{}
@@ -14,6 +15,18 @@ type ExprVisitor interface {
 type Expr interface {
 	Accept(v ExprVisitor) interface{}
 }
+type Assign struct {
+	Name  *token.Token
+	Value Expr
+}
+
+func NewAssign(name *token.Token, value Expr) *Assign {
+	return &Assign{Name: name, Value: value}
+}
+func (a *Assign) Accept(vis ExprVisitor) interface{} {
+	return vis.VisitAssignExpr(*a)
+}
+
 type Binary struct {
 	Left     Expr
 	Operator *token.Token

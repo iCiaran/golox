@@ -15,6 +15,10 @@ func (p *printer) Print(expression Expr) string {
 	return expression.Accept(p).(string)
 }
 
+func (p *printer) VisitAssignExpr(expr Assign) interface{} {
+	return expr.Name
+}
+
 func (p *printer) VisitBinaryExpr(expr Binary) interface{} {
 	return p.parenthesise(expr.Operator.Lexeme, expr.Left, expr.Right)
 }

@@ -24,7 +24,21 @@ func (p *Parser) Parse() []ast.Stmt {
 }
 
 func (p *Parser) expression() ast.Expr {
-	return p.equality()
+	return p.assignment()
+}
+
+func (p *Parser) assignment() ast.Expr {
+	expr := p.equality()
+	if p.match(token.EQUAL) {
+		equals := p.previous()
+		value := p.assignment()
+
+		if val, ok := expr.(*ast.Variable); ok {
+			return ast.NewAssign(val.Name, value)
+		}
+		loxerror.ParseError(equals, "Invalid assignment target.")
+	}
+	return expr
 }
 
 func (p *Parser) declaration() ast.Stmt {

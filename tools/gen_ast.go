@@ -10,6 +10,7 @@ func generateAst() {
 	outputDir := "../ast"
 
 	defineAst(outputDir, "Expr", []string{
+		"Assign   : Name *token.Token, Value Expr",
 		"Binary	  : Left Expr, Operator *token.Token, Right Expr",
 		"Grouping : Expression Expr",
 		"Literal  : Value interface{}",

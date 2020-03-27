@@ -15,6 +15,14 @@ func NewEnvironment() *Environment {
 	return &Environment{make(map[string]interface{}, 0)}
 }
 
+func (e *Environment) Assign(name *token.Token, value interface{}) {
+	if _, ok := e.values[name.Lexeme]; ok {
+		e.values[name.Lexeme] = value
+	} else {
+		loxerror.RuntimeError(name, fmt.Sprintf("Undefined variable '%s'.", name.Lexeme))
+	}
+}
+
 func (e *Environment) Define(name string, value interface{}) {
 	e.values[name] = value
 }
