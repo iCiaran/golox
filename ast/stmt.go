@@ -7,6 +7,7 @@ import (
 type StmtVisitor interface {
 	VisitBlockStmt(expr Block) interface{}
 	VisitExpressionStmt(expr Expression) interface{}
+	VisitIfStmt(expr If) interface{}
 	VisitPrintStmt(expr Print) interface{}
 	VisitVarStmt(expr Var) interface{}
 }
@@ -33,6 +34,19 @@ func NewExpression(expr Expr) *Expression {
 }
 func (e *Expression) Accept(vis StmtVisitor) interface{} {
 	return vis.VisitExpressionStmt(*e)
+}
+
+type If struct {
+	Condition  Expr
+	ThenBranch Stmt
+	ElseBranch Stmt
+}
+
+func NewIf(condition Expr, thenbranch Stmt, elsebranch Stmt) *If {
+	return &If{Condition: condition, ThenBranch: thenbranch, ElseBranch: elsebranch}
+}
+func (i *If) Accept(vis StmtVisitor) interface{} {
+	return vis.VisitIfStmt(*i)
 }
 
 type Print struct {

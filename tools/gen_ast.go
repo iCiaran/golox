@@ -21,6 +21,7 @@ func generateAst() {
 	defineAst(outputDir, "Stmt", []string{
 		"Block      : Statements []Stmt",
 		"Expression : Expr Expr",
+		"If         : Condition Expr, ThenBranch Stmt, ElseBranch Stmt",
 		"Print      : Expr Expr",
 		"Var        : Name *token.Token, Initializer Expr",
 	})

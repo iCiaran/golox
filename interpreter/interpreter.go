@@ -108,6 +108,15 @@ func (i *Interpreter) VisitExpressionStmt(stmt ast.Expression) interface{} {
 	return nil
 }
 
+func (i *Interpreter) VisitIfStmt(stmt ast.If) interface{} {
+	if i.isTruthy(i.evaluate(stmt.Condition)) {
+		i.execute(stmt.ThenBranch)
+	} else if stmt.ElseBranch != nil {
+		i.execute(stmt.ElseBranch)
+	}
+	return nil
+}
+
 func (i *Interpreter) VisitPrintStmt(stmt ast.Print) interface{} {
 	value := i.evaluate(stmt.Expr)
 	fmt.Printf("%v\n", value)
