@@ -149,6 +149,13 @@ func (i *Interpreter) VisitVarStmt(stmt ast.Var) interface{} {
 	return nil
 }
 
+func (i *Interpreter) VisitWhileStmt(stmt ast.While) interface{} {
+	for i.isTruthy(i.evaluate(stmt.Condition)) {
+		i.execute(stmt.Body)
+	}
+	return nil
+}
+
 func (i *Interpreter) Interpret(statements []ast.Stmt) {
 	defer func() {
 		if r := recover(); r != nil && !loxerror.HadRuntimeError {

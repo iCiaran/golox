@@ -10,6 +10,7 @@ type StmtVisitor interface {
 	VisitIfStmt(expr If) interface{}
 	VisitPrintStmt(expr Print) interface{}
 	VisitVarStmt(expr Var) interface{}
+	VisitWhileStmt(expr While) interface{}
 }
 type Stmt interface {
 	Accept(v StmtVisitor) interface{}
@@ -70,4 +71,16 @@ func NewVar(name *token.Token, initializer Expr) *Var {
 }
 func (v *Var) Accept(vis StmtVisitor) interface{} {
 	return vis.VisitVarStmt(*v)
+}
+
+type While struct {
+	Condition Expr
+	Body      Stmt
+}
+
+func NewWhile(condition Expr, body Stmt) *While {
+	return &While{Condition: condition, Body: body}
+}
+func (w *While) Accept(vis StmtVisitor) interface{} {
+	return vis.VisitWhileStmt(*w)
 }
