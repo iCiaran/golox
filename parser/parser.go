@@ -148,7 +148,7 @@ func (p *Parser) finishCall(callee ast.Expr) ast.Expr {
 				loxerror.ParseError(p.peek(), "Cannot have more than 255 arguments.")
 			}
 			arguments = append(arguments, p.expression())
-			if p.match(token.COMMA) {
+			if !p.match(token.COMMA) {
 				break
 			}
 		}

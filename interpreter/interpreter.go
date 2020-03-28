@@ -11,10 +11,15 @@ import (
 
 type Interpreter struct {
 	environment *environment.Environment
+	globals     *environment.Environment
 }
 
 func NewInterpreter() *Interpreter {
-	return &Interpreter{environment.NewEnvironment(nil)}
+	interpreter := new(Interpreter)
+	interpreter.environment = environment.NewEnvironment(nil)
+	interpreter.globals = interpreter.environment
+	interpreter.globals.Define("clock", &Clock{})
+	return interpreter
 }
 
 func (i *Interpreter) VisitLiteralExpr(expr ast.Literal) interface{} {
