@@ -97,6 +97,9 @@ func (i *Interpreter) VisitCallExpr(expr ast.Call) interface{} {
 	}
 
 	if function, ok := callee.(Callable); ok {
+		if len(arguments) != function.Arity() {
+			loxerror.RuntimeError(expr.Paren, fmt.Sprintf("Expected %v arguments but got %v.", function.Arity(), len(arguments)))
+		}
 		return function.Call(i, arguments)
 	}
 
