@@ -2,6 +2,7 @@ package interpreter
 
 import (
 	"fmt"
+	"math"
 
 	"github.com/iCiaran/golox/ast"
 	"github.com/iCiaran/golox/environment"
@@ -160,7 +161,16 @@ func (i *Interpreter) VisitIfStmt(stmt ast.If) interface{} {
 
 func (i *Interpreter) VisitPrintStmt(stmt ast.Print) interface{} {
 	value := i.evaluate(stmt.Expr)
-	fmt.Printf("%v\n", value)
+	switch value.(type) {
+	case float64:
+		if value == math.Trunc(value.(float64)) {
+			fmt.Printf("%v\n", int(value.(float64)))
+		} else {
+			fmt.Printf("%v\n", value)
+		}
+	default:
+		fmt.Printf("%v\n", value)
+	}
 	return nil
 }
 
