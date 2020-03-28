@@ -87,6 +87,23 @@ func (i *Interpreter) VisitBinaryExpr(expr ast.Binary) interface{} {
 	return nil
 }
 
+func (i *Interpreter) VisitCallExpr(expr ast.Call) interface{} {
+	callee := i.evaluate(expr.Callee)
+
+	arguments := make([]interface{}, 0)
+
+	for _, argument := range expr.Arguments {
+		arguments = append(arguments, i.evaluate(argument))
+	}
+
+	if function, ok := callee.(Callable); ok {
+		return function.Call(i, arguments)
+	}
+
+	loxerror.RuntimeError(expr.Paren, "Can only call functions and classes.")
+	return nil
+}
+
 func (i *Interpreter) VisitVariableExpr(expr ast.Variable) interface{} {
 	return i.environment.Get(expr.Name)
 }

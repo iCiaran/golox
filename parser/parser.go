@@ -123,7 +123,39 @@ func (p *Parser) unary() ast.Expr {
 		right := p.unary()
 		return ast.NewUnary(operator, right)
 	}
-	return p.primary()
+	return p.call()
+}
+
+func (p *Parser) call() ast.Expr {
+	expr := p.primary()
+
+	for {
+		if p.match(token.LEFT_PAREN) {
+			expr = p.finishCall(expr)
+		} else {
+			break
+		}
+	}
+
+	return expr
+}
+
+func (p *Parser) finishCall(callee ast.Expr) ast.Expr {
+	arguments := make([]ast.Expr, 0)
+	if !p.check(token.RIGHT_PAREN) {
+		for {
+			if len(arguments) > 255 {
+				loxerror.ParseError(p.peek(), "Cannot have more than 255 arguments.")
+			}
+			arguments = append(arguments, p.expression())
+			if p.match(token.COMMA) {
+				break
+			}
+		}
+	}
+
+	paren := p.consume(token.RIGHT_PAREN, "Expect ')' after arguments.")
+	return ast.NewCall(callee, paren, arguments)
 }
 
 func (p *Parser) primary() ast.Expr {

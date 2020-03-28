@@ -7,6 +7,7 @@ import (
 type ExprVisitor interface {
 	VisitAssignExpr(expr Assign) interface{}
 	VisitBinaryExpr(expr Binary) interface{}
+	VisitCallExpr(expr Call) interface{}
 	VisitGroupingExpr(expr Grouping) interface{}
 	VisitLiteralExpr(expr Literal) interface{}
 	VisitLogicalExpr(expr Logical) interface{}
@@ -39,6 +40,19 @@ func NewBinary(left Expr, operator *token.Token, right Expr) *Binary {
 }
 func (b *Binary) Accept(vis ExprVisitor) interface{} {
 	return vis.VisitBinaryExpr(*b)
+}
+
+type Call struct {
+	Callee    Expr
+	Paren     *token.Token
+	Arguments []Expr
+}
+
+func NewCall(callee Expr, paren *token.Token, arguments []Expr) *Call {
+	return &Call{Callee: callee, Paren: paren, Arguments: arguments}
+}
+func (c *Call) Accept(vis ExprVisitor) interface{} {
+	return vis.VisitCallExpr(*c)
 }
 
 type Grouping struct {

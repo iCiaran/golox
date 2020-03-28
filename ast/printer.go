@@ -23,6 +23,10 @@ func (p *printer) VisitBinaryExpr(expr Binary) interface{} {
 	return p.parenthesise(expr.Operator.Lexeme, expr.Left, expr.Right)
 }
 
+func (p *printer) VisitCallExpr(expr Call) interface{} {
+	return p.parenthesise("call", expr.Callee)
+}
+
 func (p *printer) VisitGroupingExpr(expr Grouping) interface{} {
 	return p.parenthesise("group", expr.Expression)
 }
