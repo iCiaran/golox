@@ -48,6 +48,9 @@ func runPrompt() {
 	for {
 		fmt.Print("> ")
 		line, _ := reader.ReadString('\n')
+		if line[len(line)-1] != ';' {
+			line = line + ";"
+		}
 		run(line)
 		loxerror.HadError = false
 		loxerror.HadRuntimeError = false
