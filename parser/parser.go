@@ -59,6 +59,9 @@ func (p *Parser) declaration() ast.Stmt {
 		}
 	}()
 
+	if p.match(token.FUN) {
+		return p.function("function")
+	}
 	if p.match(token.VAR) {
 		return p.varDeclaration()
 	}
@@ -302,6 +305,28 @@ func (p *Parser) varDeclaration() ast.Stmt {
 
 	p.consume(token.SEMICOLON, "Expect ';' after variable declaration.")
 	return ast.NewVar(name, initializer)
+}
+
+func (p *Parser) function(kind string) ast.Stmt {
+	name := p.consume(token.IDENTIFIER, "Expect "+kind+" name.")
+
+	p.consume(token.LEFT_PAREN, "Expect '(' after "+kind+" name.")
+	parameters := make([]*token.Token, 0)
+
+	if !p.check(token.RIGHT_PAREN) {
+		for ok := true; ok; ok = p.match(token.COMMA) {
+			if len(parameters) > 255 {
+				loxerror.ParseError(p.peek(), "Cannot have more than 255 arguments.")
+			}
+			parameters = append(parameters, p.consume(token.IDENTIFIER, "Expect parameter name."))
+		}
+	}
+	p.consume(token.RIGHT_PAREN, "Expect ')' after parameters.")
+
+	p.consume(token.LEFT_BRACE, "Expect '{' before "+kind+" body.")
+	body := p.block()
+
+	return ast.NewFunction(name, parameters, body)
 }
 
 func (p *Parser) advance() *token.Token {

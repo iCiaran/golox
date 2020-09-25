@@ -1,86 +1,85 @@
 package ast
-
 import (
-	"github.com/iCiaran/golox/token"
+"github.com/iCiaran/golox/token"
 )
-
 type StmtVisitor interface {
-	VisitBlockStmt(expr Block) interface{}
-	VisitExpressionStmt(expr Expression) interface{}
-	VisitIfStmt(expr If) interface{}
-	VisitPrintStmt(expr Print) interface{}
-	VisitVarStmt(expr Var) interface{}
-	VisitWhileStmt(expr While) interface{}
+VisitBlockStmt(expr Block) interface{}
+VisitExpressionStmt(expr Expression) interface{}
+VisitIfStmt(expr If) interface{}
+VisitFunctionStmt(expr Function) interface{}
+VisitPrintStmt(expr Print) interface{}
+VisitVarStmt(expr Var) interface{}
+VisitWhileStmt(expr While) interface{}
 }
 type Stmt interface {
-	Accept(v StmtVisitor) interface{}
+Accept(v StmtVisitor) interface{}
 }
 type Block struct {
-	Statements []Stmt
+ Statements []Stmt
 }
-
 func NewBlock(statements []Stmt) *Block {
-	return &Block{Statements: statements}
+return &Block{Statements: statements}
 }
 func (b *Block) Accept(vis StmtVisitor) interface{} {
-	return vis.VisitBlockStmt(*b)
+return vis.VisitBlockStmt(*b)
 }
-
 type Expression struct {
-	Expr Expr
+ Expr Expr
 }
-
 func NewExpression(expr Expr) *Expression {
-	return &Expression{Expr: expr}
+return &Expression{Expr: expr}
 }
 func (e *Expression) Accept(vis StmtVisitor) interface{} {
-	return vis.VisitExpressionStmt(*e)
+return vis.VisitExpressionStmt(*e)
 }
-
 type If struct {
-	Condition  Expr
-	ThenBranch Stmt
-	ElseBranch Stmt
+ Condition Expr
+ ThenBranch Stmt
+ ElseBranch Stmt
 }
-
-func NewIf(condition Expr, thenbranch Stmt, elsebranch Stmt) *If {
-	return &If{Condition: condition, ThenBranch: thenbranch, ElseBranch: elsebranch}
+func NewIf(condition Expr,thenbranch Stmt,elsebranch Stmt) *If {
+return &If{Condition: condition,ThenBranch: thenbranch,ElseBranch: elsebranch}
 }
 func (i *If) Accept(vis StmtVisitor) interface{} {
-	return vis.VisitIfStmt(*i)
+return vis.VisitIfStmt(*i)
 }
-
+type Function struct {
+ Name *token.Token
+ Params []*token.Token
+ Body []Stmt
+}
+func NewFunction(name *token.Token,params []*token.Token,body []Stmt) *Function {
+return &Function{Name: name,Params: params,Body: body}
+}
+func (f *Function) Accept(vis StmtVisitor) interface{} {
+return vis.VisitFunctionStmt(*f)
+}
 type Print struct {
-	Expr Expr
+ Expr Expr
 }
-
 func NewPrint(expr Expr) *Print {
-	return &Print{Expr: expr}
+return &Print{Expr: expr}
 }
 func (p *Print) Accept(vis StmtVisitor) interface{} {
-	return vis.VisitPrintStmt(*p)
+return vis.VisitPrintStmt(*p)
 }
-
 type Var struct {
-	Name        *token.Token
-	Initializer Expr
+ Name *token.Token
+ Initializer Expr
 }
-
-func NewVar(name *token.Token, initializer Expr) *Var {
-	return &Var{Name: name, Initializer: initializer}
+func NewVar(name *token.Token,initializer Expr) *Var {
+return &Var{Name: name,Initializer: initializer}
 }
 func (v *Var) Accept(vis StmtVisitor) interface{} {
-	return vis.VisitVarStmt(*v)
+return vis.VisitVarStmt(*v)
 }
-
 type While struct {
-	Condition Expr
-	Body      Stmt
+ Condition Expr
+ Body Stmt
 }
-
-func NewWhile(condition Expr, body Stmt) *While {
-	return &While{Condition: condition, Body: body}
+func NewWhile(condition Expr,body Stmt) *While {
+return &While{Condition: condition,Body: body}
 }
 func (w *While) Accept(vis StmtVisitor) interface{} {
-	return vis.VisitWhileStmt(*w)
+return vis.VisitWhileStmt(*w)
 }

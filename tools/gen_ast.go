@@ -24,6 +24,7 @@ func generateAst() {
 		"Block      : Statements []Stmt",
 		"Expression : Expr Expr",
 		"If         : Condition Expr, ThenBranch Stmt, ElseBranch Stmt",
+		"Function   : Name *token.Token, Params []*token.Token, Body []Stmt",
 		"Print      : Expr Expr",
 		"Var        : Name *token.Token, Initializer Expr",
 		"While      : Condition Expr, Body Stmt",

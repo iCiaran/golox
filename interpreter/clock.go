@@ -13,3 +13,7 @@ func (c *Clock) Call(interpreter *Interpreter, arguments []interface{}) interfac
 func (c *Clock) Arity() int {
 	return 0
 }
+
+func (c *Clock) String() string {
+	return "<native clock>"
+}

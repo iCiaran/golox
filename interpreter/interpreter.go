@@ -159,6 +159,12 @@ func (i *Interpreter) VisitIfStmt(stmt ast.If) interface{} {
 	return nil
 }
 
+func (i *Interpreter) VisitFunctionStmt(stmt ast.Function) interface{} {
+	function := NewFunction(stmt)
+	i.environment.Define(stmt.Name.Lexeme, function)
+	return nil
+}
+
 func (i *Interpreter) VisitPrintStmt(stmt ast.Print) interface{} {
 	value := i.evaluate(stmt.Expr)
 	switch value.(type) {
