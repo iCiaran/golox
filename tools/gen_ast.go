@@ -26,6 +26,7 @@ func generateAst() {
 		"If         : Condition Expr, ThenBranch Stmt, ElseBranch Stmt",
 		"Function   : Name *token.Token, Params []*token.Token, Body []Stmt",
 		"Print      : Expr Expr",
+		"Return     : Keyword *token.Token, Value Expr",
 		"Var        : Name *token.Token, Initializer Expr",
 		"While      : Condition Expr, Body Stmt",
 	})

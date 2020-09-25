@@ -205,6 +205,9 @@ func (p *Parser) statement() ast.Stmt {
 	if p.match(token.PRINT) {
 		return p.printStatement()
 	}
+	if p.match(token.RETURN) {
+		return p.returnStatement()
+	}
 	if p.match(token.LEFT_BRACE) {
 		return ast.NewBlock(p.block())
 	}
@@ -215,6 +218,17 @@ func (p *Parser) printStatement() ast.Stmt {
 	value := p.expression()
 	p.consume(token.SEMICOLON, "Expect ';' after value.")
 	return ast.NewPrint(value)
+}
+
+func (p *Parser) returnStatement() ast.Stmt {
+	keyword := p.previous()
+	var value ast.Expr
+	if !p.check(token.SEMICOLON) {
+		value = p.expression()
+	}
+
+	p.consume(token.SEMICOLON, "Expect ';' after return value.")
+	return ast.NewReturn(keyword, value)
 }
 
 func (p *Parser) expressionStatement() ast.Stmt {

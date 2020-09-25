@@ -180,6 +180,16 @@ func (i *Interpreter) VisitPrintStmt(stmt ast.Print) interface{} {
 	return nil
 }
 
+func (i *Interpreter) VisitReturnStmt(stmt ast.Return) interface{} {
+	result := returnValue{nil, stmt.Keyword}
+
+	if stmt.Value != nil {
+		result.value = i.evaluate(stmt.Value)
+	}
+
+	panic(result)
+}
+
 func (i *Interpreter) VisitVarStmt(stmt ast.Var) interface{} {
 	var value interface{} = nil
 	if stmt.Initializer != nil {

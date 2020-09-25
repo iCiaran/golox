@@ -8,6 +8,7 @@ VisitExpressionStmt(expr Expression) interface{}
 VisitIfStmt(expr If) interface{}
 VisitFunctionStmt(expr Function) interface{}
 VisitPrintStmt(expr Print) interface{}
+VisitReturnStmt(expr Return) interface{}
 VisitVarStmt(expr Var) interface{}
 VisitWhileStmt(expr While) interface{}
 }
@@ -62,6 +63,16 @@ return &Print{Expr: expr}
 }
 func (p *Print) Accept(vis StmtVisitor) interface{} {
 return vis.VisitPrintStmt(*p)
+}
+type Return struct {
+ Keyword *token.Token
+ Value Expr
+}
+func NewReturn(keyword *token.Token,value Expr) *Return {
+return &Return{Keyword: keyword,Value: value}
+}
+func (r *Return) Accept(vis StmtVisitor) interface{} {
+return vis.VisitReturnStmt(*r)
 }
 type Var struct {
  Name *token.Token
