@@ -8,14 +8,15 @@ import (
 
 type Function struct {
 	declaration ast.Function
+	environment *environment.Environment
 }
 
-func NewFunction(declaration ast.Function) *Function {
-	return &Function{declaration: declaration}
+func NewFunction(declaration ast.Function, environment environment.Environment) *Function {
+	return &Function{declaration, &environment}
 }
 
 func (f *Function) Call(interpreter *Interpreter, arguments []interface{}) (result interface{}) {
-	environment := environment.NewEnvironment(interpreter.globals)
+	environment := environment.NewEnvironment(f.environment)
 
 	for i := range f.declaration.Params {
 		environment.Define(f.declaration.Params[i].Lexeme, arguments[i])

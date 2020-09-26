@@ -160,7 +160,7 @@ func (i *Interpreter) VisitIfStmt(stmt ast.If) interface{} {
 }
 
 func (i *Interpreter) VisitFunctionStmt(stmt ast.Function) interface{} {
-	function := NewFunction(stmt)
+	function := NewFunction(stmt, *i.environment)
 	i.environment.Define(stmt.Name.Lexeme, function)
 	return nil
 }
